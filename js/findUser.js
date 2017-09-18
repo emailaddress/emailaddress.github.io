@@ -17,36 +17,51 @@ var uniqObjects = function( arr ){
 };
 
 (function() {
-    var app = new Vue({
-        el: '#author-list',
+    var vueApp = new Vue({
+        el: '#app',
         data: {
-          authors: [],
-          userName: null,
-          failed: false,
-          inProgress: false
-        }
-    })
-    var userApiPrefix = "https://api.github.com/users/";
-    var userApiSuffix = "/events";
-    var userName = getQueryStringValue("user");
-    if (userName) {
-        $("#githubUser").val(userName);
-        app.inProgress = true;
-        $.getJSON(userApiPrefix + userName + userApiSuffix)
-        .done(function(data) {
-            app.failed = false;
-            var authors = _.map(uniqObjects(_.compact(_.pluck(_.flatten(_.pluck(_.pluck(data, "payload"), "commits")), "author"))), function (el) { return JSON.parse(el); } );
-            if (authors.length > 0) {
-                console.log(authors);
-                app.authors = authors;
+            authors: [],
+            failed: false,
+            userName: '',
+            inProgress: false,
+            location: 'Sydney',
+            language: null
+        },
+        methods: {
+            search: function () {
+                vueApp.inProgress = true;
+                $.getJSON('https://api.github.com/search/users?q=type:user location:'+ this.location + '&sort=followers')
+                    .done(function (data) {
+                        var promises = _.map(data.items, function (i) { return getUserEmails(i.login) });
+                        $.when.apply($, promises).done(function () {
+                            vueApp.authors = _.toArray(arguments);
+                        });
+                    }).fail (function() {
+                        vueApp.failed = true;
+                    })
+                    .always(function() {
+                        vueApp.inProgress = false;
+                    });
             }
-        })
-        .fail (function() {
-            app.failed = true;
-        })
-        .always(function() {
-            app.inProgress = false;
-            app.userName = userName
-        });
+        }
+    });
+
+    function getUserEmails (userName) {
+        var userApiPrefix = "https://api.github.com/users/";
+        var userApiSuffix = "/events/public";
+        if (userName) {
+
+            return $.getJSON(userApiPrefix + userName + userApiSuffix)
+            .then(function(data) {
+                app.failed = false;
+                var pushEvents = _.filter(data, function (evt) { return evt.type === 'PushEvent' && evt.actor.login === userName; });
+
+                return {
+                    login: userName,
+                    emails: _.map(uniqObjects(_.compact(_.pluck(_.flatten(_.pluck(_.pluck(pushEvents, "payload"), "commits")), "author"))), function (el) { return JSON.parse(el); } )
+                };
+            });
+
+        }
     }
 })();

@@ -20,18 +20,16 @@
         </script>
     </head>
     <body>
-
+        <div id="app">
         <div class="jumbotron">
             <div class="container">
                 <h1 class="display-4">Find (almost) any GitHub user's email address!</h1>
-                <form method="get">
-                    <div class="form-group">
-                        <label for="githubUser" class="lead">Type the GitHub account name in the field below and get user and contributors emails.</p>
-                        <input type="text" required pattern="^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$" name="user" class="form-control" id="githubUser" aria-describedby="githubUserHelp" placeholder="Enter GitHub user">
-                        <small id="githubUserHelp" class="form-text text-muted">Please note that it is only possible to retrieve user's email if they made it public.</small>
-                    </div>
-                        <button type="submit" class="btn btn-primary">Find Emails</button>
-                </form>
+                <div class="form-group">
+                    <label for="githubUser" class="lead">Type the GitHub account location in the field below and get user and contributors emails.</p>
+                    <input v-model="location" type="text" required pattern="^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$" name="user" class="form-control" id="githubUser" aria-describedby="githubUserHelp" placeholder="Enter GitHub users location">
+                    <small id="githubUserHelp" class="form-text text-muted">Please note that it is only possible to retrieve user's email if they made it public.</small>
+                </div>
+                <button  v-on:click="search" class="btn btn-primary">Find Emails</button>
             </div>
         </div>
         <div class="container" id ="author-list">
@@ -41,7 +39,14 @@
                 </div>
                 <ul>
                     <li v-for="author in authors">
-                            {{ author.name }}: <a href="mailto:{{ author.email }}">{{ author.email }}</a>
+                        <div>
+                            {{ author.login }}:
+                        </div>
+                         <div>
+                            <ul>
+                                <li v-for="e in author.emails"><a href="mailto:{{ e.email }}">{{ e.email }}</a></li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
             </template>
@@ -61,11 +66,12 @@
                 </div>
             </template>
         </div>
-        
+
         <footer class="footer">
                 <div class="container">
                 </div>
               </footer>
+        </div>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script
@@ -78,7 +84,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" integrity="sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.4/vue.min.js" integrity="sha256-Ab5a6BPGk8Sg3mpdlsHzH6khPkniIWsvEuz8Fv/s9X8=" crossorigin="anonymous"></script>
         <script src="js/findUser.js"></script>
-        
+
         <script src="//static.getclicky.com/js" type="text/javascript"></script>
         <script type="text/javascript">try{ clicky.init(101073050); }catch(e){}</script>
         <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101073050ns.gif" /></p></noscript>
