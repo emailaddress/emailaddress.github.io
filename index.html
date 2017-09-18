@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <link href="css/sticky-footer.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-4">Welcome to GitHub email finder!</h1>
+                <form method="get">
+                    <div class="form-group">
+                        <label for="githubUser" class="lead">Type GitHub account name in the field below and get user and contributors emails.</p>
+                        <input type="text" required pattern="^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$" name="user" class="form-control" id="githubUser" aria-describedby="githubUserHelp" placeholder="Enter GitHub user">
+                        <small id="githubUserHelp" class="form-text text-muted">Please note that it is only possible to retrieve user's email if they made it public.</small>
+                    </div>
+                        <button type="submit" class="btn btn-primary">Find Emails</button>
+                </form>
+            </div>
+        </div>
+        <div class="container" id ="author-list">
+            <template v-if="authors.length > 0">
+                <div class="alert alert-success" role="alert">
+                    <strong>Good news!</strong> We found some emails for this user.
+                </div>
+                <ul>
+                    <li v-for="author in authors">
+                            {{ author.name }}: <a href="mailto:{{ author.email }}">{{ author.email }}</a>
+                    </li>
+                </ul>
+            </template>
+            <template v-else-if="failed">
+                <div class="alert alert-danger" role="alert">
+                    Call to GitHub failed. No such GitHub user exists or you've run out of calls quota, please try again later.
+                </div>
+            </template>
+            <template v-else-if="!authors.length && userName">
+                <div class="alert alert-warning" role="alert">
+                    Sorry, we couldn't find any emails for this user. It is possible that they made their email private.
+                </div>
+            </template>
+            <template v-else-if="inProgress">
+                <div class="alert alert-info" role="alert">
+                    Please wait while we are querying GitHub.
+                </div>
+            </template>
+        </div>
+        
+        <footer class="footer">
+                <div class="container">
+                </div>
+              </footer>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.18.12/URI.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" integrity="sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.4/vue.min.js" integrity="sha256-Ab5a6BPGk8Sg3mpdlsHzH6khPkniIWsvEuz8Fv/s9X8=" crossorigin="anonymous"></script>
+        <script src="js/findUser.js"></script>
+    </body>
+</html>
